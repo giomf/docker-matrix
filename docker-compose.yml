@@ -1,34 +1,41 @@
 version: "3.5"
-  
-services: 
 
-  SERVICE:
-    image: SERVICE_IMAGE:${PROMETHEUS_TAG}
-    container_name: SERVICE_NAME
-    depends_on:
-      - SERVICES
-    env_file:
-      - ./secrets/service.secrets.example
+services:
+
+  synapse:
+    image: matrixdotorg/synapse:${SYNAPSE_TAG}
     restart: unless-stopped
+    container_name: synapse
+    env_file: ./secrets/synapse.secrets
     volumes:
-      - ./volumes/SERVICE_NAME/data:/data
+      - ./volumes/synapse:/data
+    networks: 
+      - matrix-local-net
+      - matrix-proxy-net
     expose:
-      - 9090
-    networks:
-      - SERVICE-local-net
-      - SERVICE-proxy-net
+      - 8008
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.SERVICE.rule=Host(`${DOMAIN_NAME}`)"
-      - "traefik.http.routers.SERVICE.entrypoints=websecure"
-      - "traefik.http.routers.SERVICE.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.SERVICE.middlewares=SERVICE-hsts@docker"
-      - "traefik.http.middlewares.SERVICE-hsts.headers.customresponseheaders.Strict-Transport-Security=max-age=15552000; includeSubDomains"
-      - "traefik.docker.network=SERVICE-proxy-net"
+      - "traefik.http.routers.matrix.rule=Host(`${DOMAIN_NAME}`)"
+      - "traefik.http.routers.matrix.entrypoints=websecure"
+      - "traefik.http.routers.matrix.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.matrix.middlewares=matrix-hsts@docker"
+      - "traefik.http.middlewares.matrix-hsts.headers.customresponseheaders.Strict-Transport-Security=max-age=15552000; includeSubDomains"
+      - "traefik.docker.network=matrix-proxy-net"
+
+  synapse-database:
+    image: postgres:${POSTGRES_TAG}
+    container_name: matrix-database
+    restart: unless-stopped
+    volumes:
+      - ./volumes/postgres:/var/lib/postgresql/data
+    env_file: ./secrets/database.secrets
+    networks:
+      - matrix-local-net
 
 networks: 
-  SERVICE-local-net:
-    name: SERVICE-local-net
-  SERVICE-proxy-net:
+  matrix-local-net:
+    name: matrix-local-net
+  matrix-proxy-net:
     external: 
-      name: SERVICE-proxy-net
+      name: matrix-proxy-net
