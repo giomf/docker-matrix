@@ -1,5 +1,10 @@
 #!/bin/bash -e
 
+function init (){
+    echo "ERROR: init is not implemented for this service. Aborting!"
+    exit 1
+}
+
 if [[ -z "$1" || "$1" == "--help" ]]; then
     script_name="$(basename "$0")"
     echo "Control script for services"
@@ -9,7 +14,7 @@ if [[ -z "$1" || "$1" == "--help" ]]; then
     echo -e "\t--soft-restart\tRestart all services"
     echo -e "\t--hard-restart\Stops and Starts all services"
     echo -e "\t--logs\t\tShows the docker logs"
-    echo -e "\t--stats\t\tShows the docker logs"
+    echo -e "\t--status\t\tShows the docker logs"
     echo -e "\t--init\t\tInitializes the volumes and copies configuration files to the volumes.\n\t\t\tThis is only needed the first time!"
     echo -e "\t--help\t\tShows this help page"
     
@@ -23,7 +28,7 @@ elif [[ "$1" == "--hard-restart" ]]; then
     docker-compose down && docker-compose up -d
 elif [[ "$1" == "--logs" ]]; then
     docker-compose logs -f
-elif [[ "$1" == "--stats" ]]; then
+elif [[ "$1" == "--status" ]]; then
     docker-compose ps
 elif [[ "$1" == "--init" ]]; then
 
@@ -31,8 +36,7 @@ elif [[ "$1" == "--init" ]]; then
         echo "ERROR: volumes already exists. Aborting!"
         exit 1
     else 
-        echo "ERROR: init is not implemented for this service. Aborting!"
-        exit 1
+        init
     fi
 else 
     echo "ERROR: Command $1 not found. Aborting!"
