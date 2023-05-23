@@ -29,9 +29,12 @@ The behavior of the *init* command varies from service to service. This behavior
 After executing the *init* command, the configuration files must be adjusted in most cases. This should only happen in the volumes folder and not in the etc folder. Otherwise, sensitive data may be pushed upstream.  
 The following table gives an overview of which files must be adjusted.
 
-| Value   | File    |
-| ------- | ------- |
-| EXAMPLE | EXAMPLE |
+| Value                     | File            |
+| ------------------------- | --------------- |
+| SECRET                    | turnserver.conf |
+| REALM                     | turnserver.conf |
+| EXTERNAL_NAT_IPv4_ADDRESS | turnserver.conf |
+
 
 ## Versioning of services and domain name settings
 The versioning of the services as well as the domain name settings are done via an *.env* file which is automatically read by docker-compose. For this, the *env.example* should be copied and adapted. It should be noted that no secrets should end up in the *.env*.

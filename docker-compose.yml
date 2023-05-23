@@ -25,13 +25,21 @@ services:
 
   synapse-database:
     image: postgres:${POSTGRES_TAG}
-    container_name: matrix-database
+    container_name: synapse-database
     restart: unless-stopped
     volumes:
       - ./volumes/postgres:/var/lib/postgresql/data
     env_file: ./secrets/database.secrets
     networks:
       - matrix-local-net
+
+  synapse-turn:
+    image: coturn/coturn:${COTURN_TAG}
+    container_name: synapse-turn
+    restart: unless-stopped
+    volumes:
+      - ./volumes/coturn/turnserver.conf:/etc/turnserver.conf:ro
+    network_mode: host
 
 networks: 
   matrix-local-net:

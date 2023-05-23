@@ -1,8 +1,8 @@
 #!/bin/bash -e
 
 function init (){
-    echo "ERROR: init is not implemented for this service. Aborting!"
-    exit 1
+    mkdir "./volumes/coturn"
+    cp ./etc/turnserver.conf ./volumes/coturn/
 }
 
 if [[ -z "$1" || "$1" == "help" ]]; then
